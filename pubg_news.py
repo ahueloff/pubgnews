@@ -443,32 +443,51 @@ def merge_news(existing, new):
 # ============================================================
 
 def translate_to_russian(text):
-    """Переводит текст на русский через публичный Google Translate endpoint.
-    При недоступности сервиса возвращает исходный текст, чтобы бот продолжал работать.
+    """Переводит текст уведомления на русский, не меняя исходные данные в JSON.
+
+    Сначала просит Google Translate определить язык автоматически. Если текст
+    содержит латиницу и ответ не изменился, повторяет запрос как английский.
+    При недоступности сервиса оставляет оригинал и пишет предупреждение в лог.
     """
     text = (text or "").strip()
     if not text:
         return text
-    # Пропускаем только текст, который выглядит полностью русским.
-    # Если в русском сообщении есть английские названия новостей, переводим
-    # всё сообщение, чтобы заголовки тоже стали русскими.
+
+    # Не отправляем в перевод уже русскоязычный текст без латиницы.
     has_cyrillic = bool(re.search(r"[А-Яа-яЁё]", text))
     has_latin = bool(re.search(r"[A-Za-z]", text))
     if has_cyrillic and not has_latin:
         return text
-    try:
-        response = requests.get(
-            "https://translate.googleapis.com/translate_a/single",
-            params={"client": "gtx", "sl": "auto", "tl": "ru", "dt": "t", "q": text},
-            timeout=8,
-        )
-        response.raise_for_status()
-        data = response.json()
-        translated = "".join(part[0] for part in data[0] if part and part[0])
-        return translated or text
-    except Exception as exc:
-        log(f"⚠️ Не удалось перевести текст на русский, оставляю оригинал: {exc}")
-        return text
+
+    endpoint = "https://translate.googleapis.com/translate_a/single"
+    for source_lang in ("auto", "en"):
+        try:
+            response = requests.get(
+                endpoint,
+                params={
+                    "client": "gtx",
+                    "sl": source_lang,
+                    "tl": "ru",
+                    "dt": "t",
+                    "q": text,
+                },
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=10,
+            )
+            response.raise_for_status()
+            data = response.json()
+            translated = "".join(
+                part[0] for part in data[0]
+                if isinstance(part, list) and part and isinstance(part[0], str)
+            ).strip()
+            if translated and translated != text:
+                return translated
+            # Если автоматическое определение вернуло оригинал, пробуем en.
+        except Exception as exc:
+            log(f"⚠️ Перевод на русский не удался ({source_lang}): {exc}")
+
+    log("⚠️ Переводчик вернул исходный текст; отправляю оригинал")
+    return text
 
 
 def send_telegram(news):
@@ -529,7 +548,10 @@ def send_startup_news():
     # load_existing сохраняет список от новых новостей к старым.
     lines = ["Бот успешно запущен. Последние новости:"]
     for item in latest_news[:3]:
-        title = translate_to_russian(item.get("title", "Новости PUBG"))
+        original_title = item.get("title", "Новости PUBG")
+        title = translate_to_russian(original_title)
+        if title == original_title and re.search(r"[A-Za-z]", original_title):
+            log(f"⚠️ Заголовок остался без перевода: {original_title}")
         url = item.get("newsUrl", "")
         display_time = item.get("displayTime", "")
         line = f"• {title}"
