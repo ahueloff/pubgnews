@@ -94,4 +94,4 @@ STATUS_CACHE_FILE = "pubg_status_state.json"
 #  工具函数
 # ============================================================
 if __name__ == "__main__":
-    main()
+    print("PUBG News: скрипт запущен")
