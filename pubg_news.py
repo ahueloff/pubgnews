@@ -35,12 +35,7 @@ PUSH_LANG = os.getenv("PUSH_LANG", "en")
 SIZE = min(int(os.getenv("FETCH_SIZE", "10")), 50)
 
 # 推送排除：标题包含以下任意关键词的新闻不推送
-EXCLUDE_KEYWORDS = [
-    "每周违规账号公示",
-    "封禁公告",
-    "Weekly Bans Notice",
-    "Bans Notice"
-]
+EXCLUDE_KEYWORDS = []
 # 支持通过环境变量覆盖（用英文逗号分隔）
 _env_exclude = os.getenv("EXCLUDE_KEYWORDS", "")
 if _env_exclude:
