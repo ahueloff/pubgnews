@@ -1,3 +1,4 @@
+```yaml
 name: PUBG News
 
 on:
@@ -19,16 +20,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.11'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Run script
         env:
-          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
-          FEISHU_SECRET: ${{ secrets.FEISHU_SECRET }}
-          PUSH_LANG: "zh-cn"
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUSH_LANG: "en"
         run: python pubg_news.py
 
       - name: Commit updated news files
@@ -42,3 +43,4 @@ jobs:
             git commit -m "Update news"
             git push
           fi
+```
