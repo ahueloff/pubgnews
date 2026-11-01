@@ -41,4 +41,3 @@ jobs:
             git commit -m "Update news"
             git push
           fi
-```
