@@ -535,13 +535,6 @@ def send_startup_news():
 log("ℹ️ Стартовый отчёт отключён.")
 return True
 
-    lang = PUSH_LANG or "en"
-    latest_news = load_existing(lang)
-    if not latest_news:
-        return send_telegram({
-            "title": "PUBG News",
-            "source": "",
-            "summary": "",
         })
 
     # load_existing сохраняет список от новых новостей к старым.
