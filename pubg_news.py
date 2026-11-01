@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-PUBG 官网新闻/活动公告监控 → 飞书推送
-基于 yutangbb/pubg-news 改造，新增飞书 Webhook 推送支持
+PUBG 官网新闻/活动公告监控 → Telegram 推送
+基于 yutangbb/pubg-news 改造，新增 Telegram Bot API 推送支持
 GitHub Actions 定时运行，无需自建服务器
 """
 
@@ -21,11 +21,9 @@ from datetime import datetime
 #  配置区（GitHub Actions 部署时全部通过 Secrets 环境变量传入）
 # ============================================================
 
-# 飞书自定义机器人 Webhook 地址（必填，通过环境变量 FEISHU_WEBHOOK_URL 传入）
-FEISHU_WEBHOOK_URL = os.getenv("FEISHU_WEBHOOK_URL", "").rstrip("/")
-
-# 飞书机器人签名校验密钥（可选，没开签名就留空，通过环境变量 FEISHU_SECRET 传入）
-FEISHU_SECRET = os.getenv("FEISHU_SECRET", "")
+# Telegram bot credentials (configured as GitHub Actions repository secrets)
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 
 # 获取新闻语言列表（会分别保存为不同 json 文件）
 LANGUAGES = ["zh-cn", "zh-tw", "en", "ko"]
@@ -441,83 +439,45 @@ def merge_news(existing, new):
 
 
 # ============================================================
-#  飞书推送
+#  Telegram 推送
 # ============================================================
 
-def send_feishu(news):
-    if not FEISHU_WEBHOOK_URL:
-        log("⚠️ 未配置 FEISHU_WEBHOOK_URL，跳过推送")
+def send_telegram(news):
+    """Send a PUBG news or server-status notification through Telegram."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        log("⚠️ 未配置 Telegram Bot Token 或 Chat ID，跳过推送")
         return False
 
-    # 组装富文本内容（每行一个数组）
-    content_lines = []
-
-    # 标题行
-    content_lines.append([
-        {"tag": "text", "text": f"标题：{news['title']}"}
-    ])
-
-    # 分类 / 来源
-    source = news.get("source") or news.get("category")
-    if source:
-        content_lines.append([
-            {"tag": "text", "text": f"来源：{source}"}
-        ])
-
-    # 摘要
+    title = news.get("title", "PUBG notification")
+    source = news.get("source") or news.get("category") or "PUBG"
     summary = (news.get("summary") or "").strip()
+    display_time = news.get("displayTime", "")
+    url = news.get("newsUrl", "")
+
+    parts = [f"🎮 {title}", f"来源：{source}"]
     if summary:
-        content_lines.append([
-            {"tag": "text", "text": f"摘要：{summary[:300]}"}
-        ])
+        parts.append(f"摘要：{summary[:1200]}")
+    if display_time:
+        parts.append(f"时间：{display_time}")
+    if url:
+        parts.append(f"🔗 查看详情：{url}")
 
-    # 发布时间
-    if news.get("displayTime"):
-        content_lines.append([
-            {"tag": "text", "text": f"时间：{news['displayTime']}"}
-        ])
-
-    # 跳转链接：按来源类型区分文案
-    category = news.get("category", "")
-    if category == "weibo":
-        link_text = "👉 查看微博原文"
-    elif category == "status":
-        link_text = "👉 查看状态面板"
-    else:
-        link_text = "👉 点击查看官网详情"
-    content_lines.append([
-        {"tag": "a", "text": link_text, "href": news["newsUrl"]}
-    ])
-
-    payload = {
-        "msg_type": "post",
-        "content": {
-            "post": {
-                "zh_cn": {
-                    "title": PUSH_TITLE,
-                    "content": content_lines
-                }
-            }
-        }
-    }
-
-    # 签名校验
-    if FEISHU_SECRET:
-        timestamp = str(int(time.time()))
-        payload["timestamp"] = timestamp
-        payload["sign"] = gen_feishu_sign(FEISHU_SECRET, timestamp)
-
+    text = "\n\n".join(parts)
+    api_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     try:
-        resp = requests.post(FEISHU_WEBHOOK_URL, json=payload, timeout=15)
+        resp = requests.post(
+            api_url,
+            json={"chat_id": TELEGRAM_CHAT_ID, "text": text, "disable_web_page_preview": False},
+            timeout=15,
+        )
         result = resp.json()
-        if result.get("code") == 0 or result.get("StatusCode") == 0:
-            log(f"✅ 飞书推送成功：{news['title']}")
+        if resp.ok and result.get("ok") is True:
+            log(f"✅ Telegram 推送成功：{title}")
             return True
-        else:
-            log(f"❌ 飞书推送失败：{json.dumps(result, ensure_ascii=False)}")
-            return False
+        log(f"❌ Telegram 推送失败：{json.dumps(result, ensure_ascii=False)}")
+        return False
     except Exception as e:
-        log(f"❌ 飞书推送异常：{e}")
+        log(f"❌ Telegram 推送异常：{e}")
         return False
 
 
@@ -532,8 +492,8 @@ def push_new_news(existing, new, lang):
     new: 刚拉取的新新闻列表
     lang: 当前语言
     """
-    if not FEISHU_WEBHOOK_URL:
-        log("⚠️ 未配置飞书 Webhook，跳过推送环节")
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        log("⚠️ 未配置 Telegram Bot Token 或 Chat ID，跳过推送环节")
         return 0
 
     # 官网语言按 PUSH_LANG 过滤；微博（weibo）只要开关开启就推送
@@ -570,7 +530,7 @@ def push_new_news(existing, new, lang):
             continue
 
         # 推送
-        if send_feishu(item):
+        if send_telegram(item):
             pushed_count += 1
         # 无论成功失败都标记为已处理，防止失败时反复轰炸
         existing_ids.add(post_id)
@@ -586,7 +546,7 @@ def main():
     log("=" * 50)
     log("🚀 PUBG 新闻公告监控脚本启动")
     log(f"📡 推送语言：{PUSH_LANG or '（未设置，不推送）'}")
-    log(f"🔑 飞书 Webhook：{'已配置' if FEISHU_WEBHOOK_URL else '未配置'}")
+    log(f"📱 Telegram：{'已配置' if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID else '未配置'}")
     log(f"📝 排除关键词：{EXCLUDE_KEYWORDS}")
     log(f"📱 微博抓取：{'已开启（UID ' + WEIBO_UID + '，关键词=' + str(WEIBO_KEYWORDS) + '）' if ENABLE_WEIBO else '已关闭'}")
     log(f"📡 服务器状态监控：{'已开启（pubg.plus）' if ENABLE_STATUS else '已关闭'}")
@@ -664,7 +624,7 @@ def main():
             else:
                 events = check_status_change(old_state, new_state)
                 for ev in events:
-                    if send_feishu(ev):
+                    if send_telegram(ev):
                         total_pushed += 1
             save_status_state(new_state)
 
