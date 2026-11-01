@@ -503,7 +503,7 @@ def send_telegram(news):
     display_time = news.get("displayTime", "")
     url = news.get("newsUrl", "")
 
-    parts = [f"🎮 {title}", f"Источник: {source}"]
+    parts = [f"🎮 {title}", f": {source}"]
     if summary:
         parts.append(f"Описание: {summary[:1200]}")
     if display_time:
@@ -563,7 +563,7 @@ def send_startup_news():
 
     return send_telegram({
         "title": "",
-        "source": "Пабгуша",
+        "source": "",
         "summary": "\n\n".join(lines),
     })
 
