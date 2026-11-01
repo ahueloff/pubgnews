@@ -531,16 +531,24 @@ def send_telegram(news):
 
 
 def send_startup_news():
-"""Не отправлять стартовый отчёт в Telegram."""
-log("ℹ️ Стартовый отчёт отключён.")
-return True
+    """Send a startup check with the latest cached news on every run."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        log("⚠️ Telegram не настроен — стартовый отчёт не отправлен")
+        return False
 
+    lang = PUSH_LANG or "en"
+    latest_news = load_existing(lang)
+    if not latest_news:
+        return send_telegram({
+            "title": "",
+            "source": "",
+            "summary": "Бот запустился, но сохранённых новостей пока нет.",
         })
 
     # load_existing сохраняет список от новых новостей к старым.
-    lines = ["Бот успешно запущен. Последние новости:"]
+    lines = [""]
     for item in latest_news[:3]:
-        original_title = item.get("title", "Новости PUBG")
+        original_title = item.get("title", "")
         title = translate_to_russian(original_title)
         if title == original_title and re.search(r"[A-Za-z]", original_title):
             log(f"⚠️ Заголовок остался без перевода: {original_title}")
@@ -554,8 +562,8 @@ return True
         lines.append(line)
 
     return send_telegram({
-        "title": "PUBG News — проверка запуска",
-        "source": "GitHub Actions",
+        "title": "",
+        "source": "Пабгуша",
         "summary": "\n\n".join(lines),
     })
 
