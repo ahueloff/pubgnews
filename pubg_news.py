@@ -531,46 +531,9 @@ def send_telegram(news):
 
 
 def send_startup_news():
-    """Send a startup check with the latest cached news on every run."""
-    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        log("⚠️ Telegram не настроен — стартовый отчёт не отправлен")
-        return False
-
-    lang = PUSH_LANG or "en"
-    latest_news = load_existing(lang)
-    if not latest_news:
-        return send_telegram({
-            "title": "",
-            "source": "",
-            "summary": "Бот запустился, но сохранённых новостей пока нет.",
-        })
-
-    # load_existing сохраняет список от новых новостей к старым.
-    lines = [""]
-    for item in latest_news[:3]:
-        original_title = item.get("title", "")
-        title = translate_to_russian(original_title)
-        if title == original_title and re.search(r"[A-Za-z]", original_title):
-            log(f"⚠️ Заголовок остался без перевода: {original_title}")
-        url = item.get("newsUrl", "")
-        display_time = item.get("displayTime", "")
-        line = f"• {title}"
-        if display_time:
-            line += f" ({display_time})"
-        if url:
-            line += f"\n{url}"
-        lines.append(line)
-
-    return send_telegram({
-        "title": "",
-        "source": "",
-        "summary": "\n\n".join(lines),
-    })
-
-
-# ============================================================
-#  增量推送逻辑
-# ============================================================
+    """Стартовый отчёт отключён."""
+    log("ℹ️ Стартовый отчёт отключён.")
+    return True
 
 def push_new_news(existing, new, lang):
     """
