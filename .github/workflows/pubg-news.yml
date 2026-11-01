@@ -27,7 +27,7 @@ jobs:
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PUSH_LANG: "ru"
+          PUSH_LANG: "en"
         run: python pubg_news.py
 
       - name: Commit updated news files
