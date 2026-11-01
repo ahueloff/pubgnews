@@ -29,7 +29,7 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 LANGUAGES = ["zh-cn", "zh-tw", "en", "ko"]
 
 # 推送通知使用的语言，设为空字符串则不推送
-PUSH_LANG = os.getenv("PUSH_LANG", "zh-cn")
+PUSH_LANG = os.getenv("PUSH_LANG", "en")
 
 # 每次获取最新条数（上限 50）
 SIZE = min(int(os.getenv("FETCH_SIZE", "10")), 50)
@@ -442,25 +442,55 @@ def merge_news(existing, new):
 #  Telegram 推送
 # ============================================================
 
+def translate_to_russian(text):
+    """Переводит текст на русский через публичный Google Translate endpoint.
+    При недоступности сервиса возвращает исходный текст, чтобы бот продолжал работать.
+    """
+    text = (text or "").strip()
+    if not text:
+        return text
+    # Пропускаем только текст, который выглядит полностью русским.
+    # Если в русском сообщении есть английские названия новостей, переводим
+    # всё сообщение, чтобы заголовки тоже стали русскими.
+    has_cyrillic = bool(re.search(r"[А-Яа-яЁё]", text))
+    has_latin = bool(re.search(r"[A-Za-z]", text))
+    if has_cyrillic and not has_latin:
+        return text
+    try:
+        response = requests.get(
+            "https://translate.googleapis.com/translate_a/single",
+            params={"client": "gtx", "sl": "auto", "tl": "ru", "dt": "t", "q": text},
+            timeout=8,
+        )
+        response.raise_for_status()
+        data = response.json()
+        translated = "".join(part[0] for part in data[0] if part and part[0])
+        return translated or text
+    except Exception as exc:
+        log(f"⚠️ Не удалось перевести текст на русский, оставляю оригинал: {exc}")
+        return text
+
+
 def send_telegram(news):
     """Send a PUBG news or server-status notification through Telegram."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        log("⚠️ 未配置 Telegram Bot Token 或 Chat ID，跳过推送")
+        log("⚠️ Не настроены Telegram Bot Token или Chat ID — отправка пропущена")
         return False
 
-    title = news.get("title", "PUBG notification")
+    title = translate_to_russian(news.get("title", "Уведомление PUBG"))
     source = news.get("source") or news.get("category") or "PUBG"
-    summary = (news.get("summary") or "").strip()
+    source = {"GitHub Actions": "GitHub Actions", "微博 · KRAFTON_GAME": "Weibo · KRAFTON_GAME", "server-status": "Статус серверов"}.get(source, translate_to_russian(source))
+    summary = translate_to_russian((news.get("summary") or "").strip())
     display_time = news.get("displayTime", "")
     url = news.get("newsUrl", "")
 
-    parts = [f"🎮 {title}", f"来源：{source}"]
+    parts = [f"🎮 {title}", f"Источник: {source}"]
     if summary:
-        parts.append(f"摘要：{summary[:1200]}")
+        parts.append(f"Описание: {summary[:1200]}")
     if display_time:
-        parts.append(f"时间：{display_time}")
+        parts.append(f"Дата: {display_time}")
     if url:
-        parts.append(f"🔗 查看详情：{url}")
+        parts.append(f"🔗 Подробнее: {url}")
 
     text = "\n\n".join(parts)
     api_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
@@ -499,7 +529,7 @@ def send_startup_news():
     # load_existing сохраняет список от новых новостей к старым.
     lines = ["Бот успешно запущен. Последние новости:"]
     for item in latest_news[:3]:
-        title = item.get("title", "PUBG News")
+        title = translate_to_russian(item.get("title", "Новости PUBG"))
         url = item.get("newsUrl", "")
         display_time = item.get("displayTime", "")
         line = f"• {title}"
@@ -528,7 +558,7 @@ def push_new_news(existing, new, lang):
     lang: 当前语言
     """
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
-        log("⚠️ 未配置 Telegram Bot Token 或 Chat ID，跳过推送环节")
+        log("⚠️ Не настроены Telegram Bot Token или Chat ID — отправка пропущена")
         return 0
 
     # 官网语言按 PUSH_LANG 过滤；微博（weibo）只要开关开启就推送
@@ -579,33 +609,33 @@ def push_new_news(existing, new, lang):
 
 def main():
     log("=" * 50)
-    log("🚀 PUBG 新闻公告监控脚本启动")
-    log(f"📡 推送语言：{PUSH_LANG or '（未设置，不推送）'}")
-    log(f"📱 Telegram：{'已配置' if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID else '未配置'}")
-    log(f"📝 排除关键词：{EXCLUDE_KEYWORDS}")
-    log(f"📱 微博抓取：{'已开启（UID ' + WEIBO_UID + '，关键词=' + str(WEIBO_KEYWORDS) + '）' if ENABLE_WEIBO else '已关闭'}")
-    log(f"📡 服务器状态监控：{'已开启（pubg.plus）' if ENABLE_STATUS else '已关闭'}")
+    log("🚀 Запущен мониторинг новостей PUBG")
+    log(f"📡 Язык уведомлений: {PUSH_LANG or '（未设置，不推送）'}")
+    log(f"📱 Telegram: {'已配置' if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID else '未配置'}")
+    log(f"📝 Исключённые ключевые слова: {EXCLUDE_KEYWORDS}")
+    log(f"📱 Проверка Weibo: {'已开启（UID ' + WEIBO_UID + '，关键词=' + str(WEIBO_KEYWORDS) + '）' if ENABLE_WEIBO else '已关闭'}")
+    log(f"📡 Мониторинг состояния серверов: {'已开启（pubg.plus）' if ENABLE_STATUS else '已关闭'}")
     log("=" * 50)
 
     total_pushed = 0
 
     for lang in LANGUAGES:
-        log(f"\n--- 处理语言：{lang} ---")
+        log(f"\n--- Обрабатываю язык источника: {lang} ---")
 
         # 1. 读取本地缓存
         existing_news = load_existing(lang)
-        log(f"📂 本地缓存 {len(existing_news)} 条")
+        log(f"📂 В кэше: {len(existing_news)} новостей")
 
         # 2. 拉取最新新闻
         try:
             new_news = fetch_news(lang)
-            log(f"📡 官网拉取 {len(new_news)} 条")
+            log(f"📡 Получено с официального сайта: {len(new_news)} новостей")
         except Exception as e:
-            log(f"❌ 拉取失败（{lang}）：{e}")
+            log(f"❌ Ошибка получения новостей ({lang}): {e}")
             continue
 
         if not new_news:
-            log("⚠️ 未获取到新闻，跳过")
+            log("⚠️ Новости не получены, пропускаю")
             continue
 
         # 3. 增量推送（仅对 PUSH_LANG 生效）
@@ -624,10 +654,10 @@ def main():
 
         try:
             new_weibo = fetch_weibo()
-            log(f"📡 微博拉取 {len(new_weibo)} 条维护类公告")
+            log(f"📡 Получено уведомлений о техработах из Weibo: {len(new_weibo)}")
         except Exception as e:
             # 微博失败不影响官网主流程
-            log(f"❌ 微博拉取失败（已跳过，不影响官网）：{e}")
+            log(f"❌ Не удалось получить данные Weibo (пропускаю; сайт PUBG продолжит работать): {e}")
             new_weibo = []
 
         if new_weibo:
@@ -649,13 +679,13 @@ def main():
                 f"ver={pc.get('client_version')}"
             )
         except Exception as e:
-            log(f"❌ 服务器状态拉取失败（已跳过）：{e}")
+            log(f"❌ Не удалось получить статус серверов (пропускаю): {e}")
             new_state = None
 
         if new_state:
             # 首次运行只记录基线，不推送
             if not old_state:
-                log("ℹ️ 首次运行，记录当前状态作为基线（不推送）")
+                log("ℹ️ Первый запуск: сохраняю исходное состояние серверов без уведомления")
             else:
                 events = check_status_change(old_state, new_state)
                 for ev in events:
@@ -667,7 +697,7 @@ def main():
     send_startup_news()
 
     log("\n" + "=" * 50)
-    log(f"🏁 执行完成，本次共推送 {total_pushed} 条新公告")
+    log(f"🏁 Готово. Отправлено новых уведомлений: {total_pushed}")
     log("=" * 50)
 
 
