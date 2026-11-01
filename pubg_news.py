@@ -93,3 +93,36 @@ STATUS_CACHE_FILE = "pubg_status_state.json"
 # ============================================================
 #  工具函数
 # ============================================================
+
+def log(msg):
+    """打印带时间戳的日志"""
+    time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{time_str}] {msg}", flush=True)
+
+
+def gen_feishu_sign(secret, timestamp):
+    """生成飞书机器人签名（开启签名校验时使用）"""
+    string_to_sign = f"{timestamp}\n{secret}"
+    hmac_code = hmac.new(
+        string_to_sign.encode("utf-8"),
+        digestmod=hashlib.sha256
+    ).digest()
+    return base64.b64encode(hmac_code).decode("utf-8")
+
+
+# ============================================================
+#  PUBG 官网 API 拉取
+# ============================================================
+
+def fetch_news(lang):
+    """
+    调用 PUBG 官网 API 拉取指定语言的新闻列表
+    返回标准化后的新闻字典列表
+    """
+    headers = {
+        "Origin": "https://pubg.com",
+        "Referer": "https://pubg.com/",
+        "Service-Game": "pubg",
+        "Service-Lang": lang,
+        "Service-Namespace": "PUBG_OFFICIAL",
+        "Service-Url": f"https://pubg.com/{lang}/news",
