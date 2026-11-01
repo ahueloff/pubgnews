@@ -540,9 +540,9 @@ def send_startup_news():
     latest_news = load_existing(lang)
     if not latest_news:
         return send_telegram({
-            "title": "PUBG News — проверка запуска",
-            "source": "GitHub Actions",
-            "summary": "Бот запустился, но сохранённых новостей пока нет.",
+            "title": "PUBG News",
+            "source": "",
+            "summary": "",
         })
 
     # load_existing сохраняет список от новых новостей к старым.
