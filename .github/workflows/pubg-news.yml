@@ -1,6 +1,4 @@
-
 name: PUBG News
-
 on:
   schedule:
     - cron: '*/15 * * * *'
