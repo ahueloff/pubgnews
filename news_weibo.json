@@ -1,5 +1,20 @@
 [
     {
+        "title": "正式服停机维护公告",
+        "summary": "【正式服停机维护公告】 各位玩家大家好，我们将在本周三8点开始正式服的停机维护。 - 维护开始时间：北京时间11月4日（星期三）8点（预计维护时长9小时） - 维护内容： 44.1版本更新内容实装正式服 维护结束后，请各位玩家重新启动Steam客户端获取更新。 注：开服时间可能会根据具体情况进行调整。",
+        "postId": "5361183487954372",
+        "category": "weibo",
+        "labels": [
+            "weibo"
+        ],
+        "createdAt": "2026-11-03 15:00:00",
+        "displayTime": "2026-11-03 15:00:00",
+        "imageUrl": "",
+        "thumbUrl": "",
+        "newsUrl": "https://www.sina.cn/news/detail/5361183487954372.html",
+        "source": "微博 · KRAFTON_GAME"
+    },
+    {
         "title": "Steam 连接故障公告",
         "summary": "【Steam 连接故障公告】 玩家们大家好，目前 Steam 平台整体服务发生故障，导致登录及访问游戏出现问题。 我们正在关注情况，并将及时确认服务恢复进展。问题解决后，我们将再次同步。 对于给您带来的不便，我们深表歉意。感谢您的支持与理解！ #krafton#",
         "postId": "5358646902653520",
@@ -12,6 +27,21 @@
         "imageUrl": "",
         "thumbUrl": "",
         "newsUrl": "https://www.sina.cn/news/detail/5358646902653520.html",
+        "source": "微博 · KRAFTON_GAME"
+    },
+    {
+        "title": "Steam 连接故障公告",
+        "summary": "【Steam 连接故障公告】 玩家们大家好，目前 Steam 平台整体服务发生故障，导致登录及访问游戏出现问题。 我们正在关注情况，并将及时确认服务恢复进展。问题解决后，我们将再次同步。 对于给您带来的不便，我们深表歉意。感谢您的支持与理解！ #krafton#",
+        "postId": "5358439494845612",
+        "category": "weibo",
+        "labels": [
+            "weibo"
+        ],
+        "createdAt": "2026-10-26 20:41:00",
+        "displayTime": "2026-10-26 20:41:00",
+        "imageUrl": "",
+        "thumbUrl": "",
+        "newsUrl": "https://www.sina.cn/news/detail/5358439494845612.html",
         "source": "微博 · KRAFTON_GAME"
     },
     {
@@ -117,36 +147,6 @@
         "imageUrl": "",
         "thumbUrl": "",
         "newsUrl": "https://www.sina.cn/news/detail/5351036604913083.html",
-        "source": "微博 · KRAFTON_GAME"
-    },
-    {
-        "title": "正式服不停机维护公告",
-        "summary": "【正式服不停机维护公告】 玩家们大家好，我们将在本周三10点开始正式服的不停机维护。 -维护开始时间：北京时间2026年9月30日（星期三）10点 -维护内容：服务器稳定性更新 对于更新维护带来的不便，敬请谅解。届时请大家重启客户端获取更新。 #krafton#",
-        "postId": "5348499862064182",
-        "category": "weibo",
-        "labels": [
-            "weibo"
-        ],
-        "createdAt": "2026-09-29 15:00:00",
-        "displayTime": "2026-09-29 15:00:00",
-        "imageUrl": "",
-        "thumbUrl": "",
-        "newsUrl": "https://www.sina.cn/news/detail/5348499862064182.html",
-        "source": "微博 · KRAFTON_GAME"
-    },
-    {
-        "title": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
-        "summary": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
-        "postId": "5346280261813005",
-        "category": "weibo",
-        "labels": [
-            "weibo"
-        ],
-        "createdAt": "2026-09-23 11:53:00",
-        "displayTime": "2026-09-23 11:53:00",
-        "imageUrl": "",
-        "thumbUrl": "",
-        "newsUrl": "https://www.sina.cn/news/detail/5346280261813005.html",
         "source": "微博 · KRAFTON_GAME"
     }
 ]
