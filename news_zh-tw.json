@@ -45,6 +45,21 @@
         "newsUrl": "https://pubg.com/zh-tw/news/11306"
     },
     {
+        "title": "[開發者信件] 輕機槍遊戲生態輪替結束及後續方向 ",
+        "summary": "",
+        "postId": 11337,
+        "category": "dev_notes",
+        "labels": [
+            "label_pc",
+            "label_console"
+        ],
+        "createdAt": "2026-11-04 02:04:29",
+        "displayTime": "2026-11-03 06:00:00",
+        "imageUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261104/17iq7B0S.jpg",
+        "thumbUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261104/17iq7B0S_thumb.jpg",
+        "newsUrl": "https://pubg.com/zh-tw/news/11337"
+    },
+    {
         "title": "PUBG x IVE",
         "summary": "",
         "postId": 11307,
@@ -132,20 +147,5 @@
         "imageUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261014/QL3zlyic.jpg",
         "thumbUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261014/QL3zlyic_thumb.jpg",
         "newsUrl": "https://pubg.com/zh-tw/news/11138"
-    },
-    {
-        "title": "2026 年 10 月商店更新",
-        "summary": "歡迎來到 2026 年的第十次商店更新！",
-        "postId": 11182,
-        "category": "notice",
-        "labels": [
-            "label_pc",
-            "label_console"
-        ],
-        "createdAt": "2026-10-13 03:46:47",
-        "displayTime": "2026-10-13 06:00:00",
-        "imageUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261013/WXqX2yj9.jpg",
-        "thumbUrl": "https://wstatic-prod-boc.krafton.com/common/content/news/20261013/WXqX2yj9_thumb.jpg",
-        "newsUrl": "https://pubg.com/zh-tw/news/11182"
     }
 ]
