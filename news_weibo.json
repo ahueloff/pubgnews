@@ -1,5 +1,20 @@
 [
     {
+        "title": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
+        "summary": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
+        "postId": "5361559935386194",
+        "category": "weibo",
+        "labels": [
+            "weibo"
+        ],
+        "createdAt": "2026-11-04 15:56:00",
+        "displayTime": "2026-11-04 15:56:00",
+        "imageUrl": "",
+        "thumbUrl": "",
+        "newsUrl": "https://www.sina.cn/news/detail/5361559935386194.html",
+        "source": "微博 · KRAFTON_GAME"
+    },
+    {
         "title": "正式服停机维护公告",
         "summary": "【正式服停机维护公告】 各位玩家大家好，我们将在本周三8点开始正式服的停机维护。 - 维护开始时间：北京时间11月4日（星期三）8点（预计维护时长9小时） - 维护内容： 44.1版本更新内容实装正式服 维护结束后，请各位玩家重新启动Steam客户端获取更新。 注：开服时间可能会根据具体情况进行调整。",
         "postId": "5361183487954372",
@@ -132,21 +147,6 @@
         "imageUrl": "",
         "thumbUrl": "",
         "newsUrl": "https://www.sina.cn/news/detail/5353186089240461.html",
-        "source": "微博 · KRAFTON_GAME"
-    },
-    {
-        "title": "正式服停机维护公告",
-        "summary": "【正式服停机维护公告】 各位玩家大家好，我们将在本周三8点开始正式服的停机维护。 - 维护开始时间： 2026年10月7日（星期三）8点（预计维护时长4小时） - 维护内容： 1. 修复了在维护期间无法游玩鸡地求生的问题 2. 服务器稳定性更新 维护结束后，请各位玩家重新启动Steam客户端获取更新。 注：开",
-        "postId": "5351036604913083",
-        "category": "weibo",
-        "labels": [
-            "weibo"
-        ],
-        "createdAt": "2026-10-06 15:00:00",
-        "displayTime": "2026-10-06 15:00:00",
-        "imageUrl": "",
-        "thumbUrl": "",
-        "newsUrl": "https://www.sina.cn/news/detail/5351036604913083.html",
         "source": "微博 · KRAFTON_GAME"
     }
 ]
