@@ -1,0 +1,36 @@
+
+name: PUBG News Alerts V2 Test
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pubg-news-v2
+  cancel-in-progress: false
+
+jobs:
+  pubg-news-v2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements-v2.txt
+
+      - name: Run V2
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          PUSH_LANG: "en"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python pubg_news_v2.py
