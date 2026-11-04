@@ -1,0 +1,3 @@
+# Install the existing project's dependencies, then add image generation.
+-r requirements.txt
+Pillow>=10.0.0
