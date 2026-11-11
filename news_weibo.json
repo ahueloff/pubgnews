@@ -1,5 +1,20 @@
 [
     {
+        "title": "玩家们大家好，不停机维护已结束，请重启客户端获取更新。我们已",
+        "summary": "玩家们大家好，不停机维护已结束，请重启客户端获取更新。我们已修复游戏内麦克风声音较小的问题。若在一定时间内未能完成更新，游戏可能会自动断开连接。请您关闭游戏后完成更新，再重新登录游戏。对此带来的不便，我们深表歉意。感谢您的支持与理解！#krafton#",
+        "postId": "5364038450023155",
+        "category": "weibo",
+        "labels": [
+            "weibo"
+        ],
+        "createdAt": "2026-11-11 12:04:00",
+        "displayTime": "2026-11-11 12:04:00",
+        "imageUrl": "",
+        "thumbUrl": "",
+        "newsUrl": "https://www.sina.cn/news/detail/5364038450023155.html",
+        "source": "微博 · KRAFTON_GAME"
+    },
+    {
         "title": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
         "summary": "今日停机维护已结束，请重启客户端获取更新。#krafton#",
         "postId": "5361559935386194",
@@ -132,21 +147,6 @@
         "imageUrl": "",
         "thumbUrl": "",
         "newsUrl": "https://www.sina.cn/news/detail/5353573291397722.html",
-        "source": "微博 · KRAFTON_GAME"
-    },
-    {
-        "title": "热补丁修复通知",
-        "summary": "【热补丁修复通知】 玩家们大家好，我们于早前完成了用于提升服务器稳定性的热补丁修复。 若在一定时间内未能完成更新，游戏可能会自动断开连接。请您关闭游戏后完成更新，再重新登录游戏。 对此带来的不便，我们深表歉意。感谢您的支持与理解！ #krafton#",
-        "postId": "5353186089240461",
-        "category": "weibo",
-        "labels": [
-            "weibo"
-        ],
-        "createdAt": "2026-10-12 13:21:00",
-        "displayTime": "2026-10-12 13:21:00",
-        "imageUrl": "",
-        "thumbUrl": "",
-        "newsUrl": "https://www.sina.cn/news/detail/5353186089240461.html",
         "source": "微博 · KRAFTON_GAME"
     }
 ]
